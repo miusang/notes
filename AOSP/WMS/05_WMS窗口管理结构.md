@@ -1,0 +1,20 @@
+## 1. WindowToken
+
+WindowToken的作用：
+
+* WindowToken将同属于一个应用组件的窗口组织在一起。所谓的应用组件可以是Activity、InputMethod、Wallpaper以及Dream。WindowToken指代一个应用组件，如Z-order排序时，同属于一个WindowToken的窗口会被安排在一起。
+* WindowToken具有令牌的作用，是对应用组件的行为进行规范管理的一个手段。WindowToken由应用组件或其管理者向WMS声明并持有。应用组件在需要新的窗口时，必须提供WindowToken来表明自己的身份，并且窗口的类型必须与所持有的WindowToken类型一致。
+
+
+
+## 2. WindowState
+
+从WMS.addWindow()可以看到，当向MWS添加一个窗口时，WMS会为其创建一个WindowState。WindowState表示一个窗口。
+
+WindowState对象都存放在mWindowMap里面，，mWindowMap是所有窗口的一个全集，如果梳理WindowState的一些增加、移动和删除等操作，会更加理解这个类。WindowState的构造函数会根据用户传进来的Window Type计算出窗口的mBaseLayer，mSubLayer和mLastLayer值，分别对应于主窗口，主窗口上弹出的子窗口（如输入法），以及动画时分别对应的ZOrder值。WindowState    构造函数中还会生成IWindowId.Stub 对象和DeathRecipient对象来分别监听Focus和窗口死亡的信息，生成一个WindowStateAnimator 负责整个Window的动画，并在内部将windowToken, appWindowToken等关联起来。
+
+
+
+## 3. DisplayContent
+
+如果说WindowToken按照窗口之间的逻辑关系将其分组，则DisplayContent根据窗口的显示位置将其分组。隶属于一个DisplayContent的窗口将会被显示到同一个屏幕中。每个DisplayContent都对应一个唯一的ID，添加窗口时可以指定这个ID来决定它被显示到哪个屏幕中。
