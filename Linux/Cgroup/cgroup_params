@@ -1,0 +1,90 @@
+
+cgroup 
+|
+|-- cpuctl
+|   |-- cgroup.clone_children 
+|   |   默认值为0，如果为1，表示子cgroup继承父cgroup的配置。
+|   |-- cgroup.procs 
+|   |   当前cgroup运行的线程群组列表，tgid，无序，可重复。
+|   |-- cgroup.sane_behavior 
+|   |-- cpu.cfs_period_us
+|   |   cpu周期长度。和cfs_quota_us配合使用。
+|   |-- cpu.cfs_quota_us 
+|   |   当前cgroup再周期长度内所能使用cpu的时间长度。默认值-1，表示不受cpu时
+|   |   间的限制。
+|   |-- cpu.rt_period_us 
+|   |   与cfs_period_us（用于普通进程）类似，用于实时进程。
+|   |-- cpu.rt_runtime_us 
+|   |   与cfs_quota_us（用于普通进程）类似，用于实时进程。
+|   |-- cpu.shares 
+|   |   用来设置cpu的相对值，是针对所有cpu。默认值为1024。例如两个cgroup A和B，
+|   |   A的shares值为1024，B的值为512，则A将获得1024/(1024 + 512)=66%的cpu资
+|   |   源，而B获得33%的cpu资源。
+|   |-- cpu.stat 
+|   |   统计了以下三个参数：
+|   |   nr_periods：表示过了多少个cfs_period_us周期
+|   |   nr_throttled：在上面的周期中，有多少次受到了限制，即cgroup中的进程在指定
+|   |   周期内用光了它的配额。
+|   |   throttled_time：cgroup中进程被限制使用cpu持续了多长时间（ns）。
+|   |-- notify_on_release
+|   |   默认值为0，如果为1，表示当cgroup不再包含任务时，kernel会执行release_agent
+|   |   文件的内容。
+|   |-- release_agent
+|   |   包含了需要执行指令的内容如shell脚本等
+|   |-- tasks
+|   |   当前cgroup中的所有进程id，无序，可重复。
+|
+|-- cpuset
+|   |-- cgroup.clone_children
+|   |-- cgroup.procs
+|   |-- cgroup.sane_behavior
+|   |-- cpu_exclusive
+|   |   默认值为0，其他cpuset及其父子cpuset是否可以共享当前cpuset的cpus。
+|   |-- cpus
+|   |   当前cgroup可以访问的cpu。
+|   |-- effective_cpus
+|   |   当前cgroup真实可用的cpu列表。
+|   |-- effective_mems
+|   |   当前cgroup真是可用的mem node列表。
+|   |-- mem_exclusive
+|   |   默认为0，其他cpuset是否可以共享当前cpuset的内存节点。1表示当前cpuset独享。
+|   |-- mem_hardwall
+|   |   内存页和缓冲数据的kernel分配是否收到cpuset的特定内存节点限制。默认为0，
+|   |   页面和缓冲数据在用户进程间共享。
+|   |-- memory_migrate
+|   |   内存节点改变是否需要迁移。默认为0。一般情况下，allocate一个page后，当设
+|   |   置为1，当task迁移到新的cpuset下时，就会将在原先cpuset所allocate的内存迁
+|   |   移到新的cpuset下，并且是与原先相对应的page位置。
+|   |-- memory_pressure
+|   |   记录为了满足内存足够剩余空间的要求，释放cpuset中内存节点的次数。
+|   |-- memory_pressure_enabled
+|   |   设置为1，memory_pressure开始统计。
+|   |-- memory_spread_page
+|   |   默认为0，设置为1表示，文件系统的buffer（page cache）将会允许从所有内存
+|   |   mem_allowed的节点中，而不是仅在task所在的节点中寻找free page。
+|   |-- memory_spread_slab
+|   |   默认为0，设置为1表示，slab cache（例如inode，dentry）将会允许从所有内存
+|   |   mem_allowed的节点中，而不是仅在task所在的节点中寻找free page。
+|   |-- mems
+|   |   当前cgroup中mem node列表。
+|   |-- notify_on_release
+|   |-- release_agent
+|   |-- sched_load_balance
+|   |   设置为1，打开cpu负载均衡。
+|   |-- sched_relax_domain_level
+|   |   默认值-1。
+|   |-- tasks
+|
+|-- freezer
+|   |-- cgroup.clone_children
+|   |-- cgroup.procs
+|   |-- cgroup.sane_behavior
+|   |-- freezer.parent_freezing
+|   |   只读，0表示父CGroup没有一个进入冻结状态，其他为1。
+|   |-- freezer.self_freezing
+|   |-- freezer.state
+|   |   设置当前cgroup状态，FREEZING冻结中，FROZEN已冻结，THAWED解冻状态。
+|   |-- notify_on_release
+|   |-- release_agent
+|   |-- tasks
+
