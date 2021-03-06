@@ -1,6 +1,63 @@
 
 cgroup 
 |
+|-- blkio
+|   |-- blkio.reset_stats
+|   |   重置统计数据，往该文件中写入一个整数值即可。
+|   |-- blkio.throttle.io_serviced
+|   |   group 中进程读写磁盘的次数，文件中内容格式为 
+|   |   major:minor operation number，表示对磁盘进行某种操作（read、write、
+|   |   sync、async、total）的次数
+|   |-- blkio.throttle.io_service_bytes
+|   |   和上面类似，不过这里保存的是操作传输的字节数.
+|   |-- blkio.time
+|   |   统计 cgroup 对各个设备的访问时间，格式为 major:minor milliseconds.
+|   |-- blkio.io_serviced
+|   |   CFQ 调度器下，cgroup 对设备的各种操作次数，和blkio.throttle.io_serviced
+|   |   刚好相反，所有不是 throttle 下的请求
+|   |-- blkio.io_services_bytes
+|   |   CFQ 调度器下，cgroup 对各种设备的操作字节数.
+|   |-- blkio.sectors
+|   |   cgroup 中传输的扇区次数，格式为 major:minor sector_count.
+|   |-- blkio.queued
+|   |   IO 请求进队列的次数，格式为 number operation.
+|   |-- blkio.dequeue
+|   |   IO 请求被设备出队列的次数，格式为 major:minor number
+|   |-- blkio.avg_queue_size
+|   |-- blkio.merged
+|   |   把 BIOS 请求合并到 IO 操作请求的次数，格式为 number operation.
+|   |-- blkio.io_wait_time
+|   |   cgroup 等待队列服务的时间
+|   |-- blkio.io_service_time
+|   |   CFQ 调度器下，cgroup 处理请求的时间（从请求开始调度，到 IO 操作完成）.
+|   
+|
+|-- cpuacct
+|   |-- cpuacct.stat
+|   |   该 cgroup 中所有任务使用 CPU 的user 和 system 时间，也就是用户态 CPU
+|   |   时间和内核态 CPU 时间.
+|   |-- cpuacct.usage
+|   |   该 cgroup 中所有任务（包括子 cgroup 中的任务，下同）总共使用 CPU 的时
+|   |   间，单位是纳秒（ns）。往文件中写入 0 可以重置统计数据.
+|   |-- cpuacct.usage_all
+|   |   详细输出文件cpuacct.usage_percpu_user和cpuacct.usage_percpu_sys的内容.
+|   |-- cpuacct.usage_percpu
+|   |   报告一个cgroup中所有任务（包括其子孙层级中的所有任务）在每个CPU使用
+|   |   CPU的时间（纳秒）.
+|   |-- cpuacct.usage_sys
+|   |   报告一个cgroup中所有任务（包括其子孙层级中的所有任务）使用内核态CPU的
+|   |   总时间（纳秒）
+|   |-- cpuacct.usage_percpu_sys
+|   |   报告一个cgroup中所有任务（包括其子孙层级中的所有任务）在每个CPU上使用
+|   |   内核态CPU的时间（纳秒）
+|   |-- cpuacct.usage_user
+|   |   报告一个cgroup中所有任务（包括其子孙层级中的所有任务）使用用户态CPU的
+|   |   总时间（纳秒）
+|   |-- cpuacct.usage_percpu_user
+|   |   报告一个cgroup中所有任务（包括其子孙层级中的所有任务）在每个CPU上使用
+|   |   用户态CPU的时间（纳秒）
+|
+|
 |-- cpuctl
 |   |-- cgroup.clone_children 
 |   |   默认值为0，如果为1，表示子cgroup继承父cgroup的配置。
@@ -47,7 +104,8 @@ cgroup
 |   |-- effective_mems
 |   |   当前cgroup真是可用的mem node列表。
 |   |-- mem_exclusive
-|   |   默认为0，其他cpuset是否可以共享当前cpuset的内存节点。1表示当前cpuset独享。
+|   |   默认为0，其他cpuset是否可以共享当前cpuset的内存节点。1表示当前cpuset
+|   |   独享。
 |   |-- mem_hardwall
 |   |   内存页和缓冲数据的kernel分配是否收到cpuset的特定内存节点限制。默认为0，
 |   |   页面和缓冲数据在用户进程间共享。
@@ -75,6 +133,20 @@ cgroup
 |   |   默认值-1。
 |   |-- tasks
 |
+|
+|-- devices
+|   |-- devices.allow
+|   |   cgroup 中的任务能够访问的设备列表，格式为 type major:minor access
+|   |   type 表示类型,可以为 a(all), c(char), b(block）
+|   |   major:minor 代表设备编号，两个标号都可以用* 代替表示所有，
+|   |   比如 *:* 代表所有的设备
+|   |   accss 表示访问方式，可以为 r(read),w(write), m(mknod) 的组合.
+|   |-- devices.deny
+|   |   cgroup 中任务不能访问的设备，和上面的格式相同.
+|   |-- devices.list
+|   |   列出 cgroup 中设备的黑名单和白名单.
+
+|
 |-- freezer
 |   |-- cgroup.clone_children
 |   |-- cgroup.procs
@@ -87,4 +159,120 @@ cgroup
 |   |-- notify_on_release
 |   |-- release_agent
 |   |-- tasks
-
+|
+|
+|-- hugetlb
+|   |-- hugetlb.2MB.failcnt
+|   |-- hugetlb.2MB.limit_in_bytes
+|   |-- hugetlb.2MB.max_usage_in_bytes
+|   |-- hugetlb.2MB.usage_in_bytes
+|
+|
+|-- memory
+|   |-- memory.failcnt
+|   |   申请内存失败次数计数.
+|   |-- memory.force_empty
+|   |   当向memory.force_empty文件写入0时（echo 0 > memory.force_empty），
+|   |   将会立即触发系统尽可能的回收该cgroup占用的内存
+|   |-- memory.limit_in_bytes
+|   |   限制的内存总量。
+|   |-- memory.max_usage_in_bytes
+|   |   历史内存最大使用量.
+|   |-- memory.move_charge_at_immigrate
+|   |   通过设置memory.move_charge_at_immigrate让进程所占用的内存随着进程的迁
+|   |   移一起迁移到新的cgroup中。
+|   |   当memory.move_charge_at_immigrate被设置成1之后，进程占用的内存将会被统
+|   |   计到目的cgroup中，如果目的cgroup没有足够的内存，系统将尝试回收目的
+|   |   cgroup的部分内存
+|   |   当memory.move_charge_at_immigrate为0时，就算当前cgroup中里面的进程都已
+|   |   经移动到其它cgropu中去了，由于进程已经占用的内存没有被统计过去，当前
+|   |   cgroup有可能还占用很多内存，当移除该cgroup时，占用的内存需要统计到谁头
+|   |   上呢？答案是依赖memory.use_hierarchy的值，如果该值为0，将会统计到root 
+|   |   cgroup里；如果值为1，将统计到它的父cgroup里面。
+|   |-- memory.use_hierarchy
+|   |   该文件内容为0时，表示不使用继承，即父子cgroup之间没有关系；当该文件内
+|   |   容为1时，子cgroup所占用的内存会统计到所有祖先cgroup中.
+|   |-- memory.oom_control
+|   |   当物理内存达到上限后，系统的默认行为是kill掉cgroup中继续申请内存的进
+|   |   程，那么怎么控制这样的行为呢？答案是配置memory.oom_control.
+|   |   这个文件里面包含了一个控制是否为当前cgroup启动OOM-killer的标识。如果
+|   |   写0到这个文件，将启动OOM-killer，当内核无法给进程分配足够的内存时，将会
+|   |   直接kill掉该进程；如果写1到这个文件，表示不启动OOM-killer，当内核无法给
+|   |   进程分配足够的内存时，将会暂停该进程直到有空余的内存之后再继续运行；同
+|   |   时，memory.oom_control还包含一个只读的under_oom字段，用来表示当前是否
+|   |   已经进入oom状态，也即是否有进程被暂停了。
+|   |-- memory.pressure_level
+|   |   这个文件主要用来监控当前cgroup的内存压力，当内存压力大时（即已使用内存
+|   |   快达到设置的限额），在分配内存之前需要先回收部分内存，从而影响内存分配
+|   |   速度，影响性能，而通过监控当前cgroup的内存压力，可以在有压力的时候采取
+|   |   一定的行动来改善当前cgroup的性能，比如关闭当前cgroup中不重要的服务等。
+|   |   目前有三种压力水平：
+|   |   low 意味着系统在开始为当前cgroup分配内存之前，需要先回收内存中的数据了，
+|   |   这时候回收的是在磁盘上有对应文件的内存数据。
+|   |   medium 意味着系统已经开始频繁为当前cgroup使用交换空间了.
+|   |   critical 快撑不住了，系统随时有可能kill掉cgroup中的进程.
+|   |-- memory.soft_limit_in_bytes
+|   |   有了hard limit（memory.limit_in_bytes），为什么还要soft limit呢？
+|   |   hard limit是一个硬性标准，绝对不能超过这个值，而soft limit可以被超越，
+|   |   既然能被超越，要这个配置还有啥用？先看看它的特点:
+|   |   1. 当系统内存充裕时，soft limit不起任何作用.
+|   |   2. 当系统内存吃紧时，系统会尽量的将cgroup的内存限制在soft limit值之下
+|   |   （内核会尽量，但不100%保证）
+|   |   注意： 当系统内存吃紧且cgroup达到soft limit时，系统为了把当前cgroup的
+|   |   内存使用量控制在soft limit下，在收到当前cgroup新的内存分配请求时，就会
+|   |   触发回收内存操作，所以一旦到达这个状态，就会频繁的触发对当前cgroup的内
+|   |   存回收操作，会严重影响当前cgroup的性能。
+|   |-- memory.stat
+|   |   显示当前cgroup的内存使用情况.
+|   |-- memory.swappiness
+|   |   设置和显示当前的swappiness。该文件的值默认和全局的swappiness
+|   |   （/proc/sys/vm/swappiness）一样，修改该文件只对当前cgroup生效，其功能
+|   |   和全局的swappiness一样，请参考Linux交换空间中关于swappiness的介绍
+|   |-- memory.usage_in_bytes
+|   |   显示当前已用的内存.
+|   |-- memory.use_hierarchy
+|   |   该文件内容为0时，表示不使用继承，即父子cgroup之间没有关系；当该文件内容
+|   |   为1时，子cgroup所占用的内存会统计到所有祖先cgroup中.
+|   |-- memory.kmem.failcnt
+|   |-- memory.kmem.limit_in_bytes
+|   |-- memory.kmem.max_usage_in_bytes
+|   |-- memory.kmem.usage_in_bytes
+|   |-- memory.kmem.tcp.failcnt
+|   |-- memory.kmem.tcp.failcnt
+|   |-- memory.kmem.tcp.limit_in_bytes
+|   |-- memory.kmem.tcp.max_usage_in_bytes
+|   |-- memory.kmem.tcp.usage_in_bytes
+|   |-- memory.memsw.failcnt
+|   |-- memory.memsw.limit_in_bytes
+|   |-- memory.memsw.max_usage_in_bytes
+|   |-- memory.memsw.usage_in_bytes
+|
+|
+|-- net_cls
+|   |-- net_cls.classid
+|   |   net_cls 可以给 packet 打上 classid 的标签，用于过滤分类.classid 的作用
+|   |   是用于标记skb所属的 qdisc class 的.有了这个标签，流量控制器（tc）可以对
+|   |   不同的 cgroup 的 packet 起作用，Netfilter（iptables）也可以基于这个标
+|   |   签有对应的动作.
+|
+|
+|-- net_prio
+|   |-- net_prio.ifpriomap
+|   |   包含优先级图谱，这些优先级被分配给源于此群组进程的流量以及通过不同接口
+|   |   离开系统的流量.
+|   |-- net_prio.prioidx
+|   |   只读文件。它包含一个特有整数值，kernel 使用该整数值作为这个 cgroup 的
+|   |   内部代表。
+|
+|
+|-- unified
+|   |-- cgroup.controllers
+|   |   只读。包含了该Cgroup下所有可用的controllers.
+|   |-- cgroup.max.depth
+|   |   这个文件定义子cgroup的***深度。0意味着不能创建cgroup。如果尝试创建
+|   |   cgroup，会报EAGAIN错误;max表示没有限制，默认值是max。
+|   |-- cgroup.max.descendants
+|   |   当前可以创建的活跃cgroup目录的***数量，默认值”max”表示不限制。超过限
+|   |   制，返回EAGAIN。
+|   |-- cgroup.subtree_control
+|   |-- cgroup.threads
