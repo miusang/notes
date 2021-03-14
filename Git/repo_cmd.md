@@ -1,6 +1,7 @@
 # repo命令
 
-* 退回到指定日期
+* 退回到指定日期  
+  注意：这个日期是指commit日期，不是merge日期。
 
   ```
   repo forall -c 'commitID=`git log --before "2017-03-17 0700" -1 --pretty=format:"%H"`;git reset --hard $commitID'
