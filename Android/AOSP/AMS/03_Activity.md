@@ -155,7 +155,23 @@ int execute() {
 ```
 接着分析startActivityMayWait方法：
 ```java
-// framework/base/core/java/com/android/server/wm/ActivityStarter.java
-private int startActivityMayWait() {
+// framework/base/services/core/java/com/android/server/wm/ActivityStarter.java
+private int startActivityMayWait(IApplicationThread caller, int callingUid, 
+    String callingPackage, int requestRealCallingPid, int requestRealCallingUid,
+    Intent intent, String resolveType, IVoiceInteractonSession vioceSession,
+    IVoiceInteractor voiceInteractor, IBinder resultTo, String resultWho, 
+    int requestCode, int startFlags, ProfileInfo profilerInfo,
+    WaitResult outResult, Configuration globalConfig, SafeActivityOptions options,
+    boolean ignoreTargetSecurity, int userId, TaskRecord inTask, String reason,
+    boolean allowPendingRemoteAnimationRrgistryLookup, PendingIntentRecord 
+    originatingPendingIntent, boolean allowBackgroudActivityStar) {
 }
 ```
+首先了解一下前面未见过的参数：
+* callingPackage：调用者所在包名。
+* requestRealCallingPid
+* requestRealCallingUid
+* intent
+* resolveType
+* vioceSession
+* voiceInteractor
