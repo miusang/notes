@@ -41,7 +41,49 @@ ALSA使用/proc/asound目录下的文件保存设备信息并且实现一些控�
 
   
 
-## 3. bus
+## 3. filesystems
+
+系统支持的文件系统。
+
+
+
+## 4. fs
+
+* cifs
+
+  CIFS是实现文件共享服务的一种文件系统。
+
+* ext4
+
+  第四代扩展文件系统（Fourth extended filesystem）是linux系统下的日志文件系统，是ext3文件系统的后继版本。
+
+* jbd2
+
+  jbd的全拼是journaling block driver 文件系统的日志功能，jbd2是ext4文件系统版本。
+
+* nfsd
+
+  nfs的守护进程，负责接收到用户的调用请求后与内核发出请求并得到调用结果响应给用户。
+
+## 5. interrupts
+
+interrupts中的字段依次是逻辑中断号、中断在各CPU上发生的次数，中断所属父设备名称、硬件中断号、中断触发方式(电平或边沿)、中断名称。
+
+```
+           CPU0       CPU1       CPU2       CPU3       
+ 26:    7520290    6505367    6092411    8058138     GICv2  26 Level     arch_timer
+ 32:       8184          0          0          0     GICv2  32 Level     ttyS0
+ 33:          1          0          0          0     GICv2  33 Level     1f002800.keypad, RTC_PM, (null)
+ 37:      57255          0          0          0     GICv2  37 Level     mstar_mci
+ 38:          1          0          0          0     GICv2  38 Level     Mstar-otg
+ 39:       3672          0          0          0     GICv2  39 Level     ehci_hcd:usb1
+```
+
+
+
+
+
+
 
 
 

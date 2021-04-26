@@ -165,6 +165,15 @@ private int startActivityMayWait(IApplicationThread caller, int callingUid,
     boolean ignoreTargetSecurity, int userId, TaskRecord inTask, String reason,
     boolean allowPendingRemoteAnimationRrgistryLookup, PendingIntentRecord 
     originatingPendingIntent, boolean allowBackgroudActivityStar) {
+    // ...
+    final ActivityRecord[] outRecord = new ActivityRecord[1];
+    int res = startActivity(caller, intent, ephemeralIntent, resovledType, aInfo,
+        rInfo, voiceSession, voiceInteractor, resultTo, resultWho, requestCode,
+        callingPid, callingUid, callingPackage, realCallingPid, realCallingUid,
+        startFlags, options, ignoreTargetSecurity, componentSpecified, outRecord,
+        inTask, reason, allowPendingRemoteAnimationRegistryLookup, originatingPendingIntent,
+        allowBackgroundActivityStart);
+        // ...
 }
 ```
 首先了解一下前面未见过的参数：
