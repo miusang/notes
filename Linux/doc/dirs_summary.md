@@ -173,8 +173,123 @@ IO port空间的地址资源分配情况。
 
 
 
+## irq
+
+为每个注册的irq创建一个以irq编号为名字的子目录。每个子目录下的内容：
+
+```
+-r--r--r--  affinity_hint 只读条目，用于用户空间做irq平衡只用。
+-r--r--r--  effective_affinity
+-r--r--r--  effective_affinity_list
+-rw-rw-rw-  irq
+-r--r--r--  node
+-rw-r--r--  smp_affinity    irq和cpu之间的亲缘绑定关系。
+-rw-r--r--  smp_affinity_list
+-r--r--r--  spurious    可以获得该irq被处理和未被处理的次数的统计信息。
+```
 
 
+
+## kallsyms
+
+kallsyms抽取了内核用到的所有函数地址(全局的、静态的)和非栈数据变量地址，生成一个数据块，作为只读数据链接进kernel image，相当于内核中存了一个System.map。
+
+
+
+## kmsg
+
+打印内核的信息， 但是与dmesg 有不同， 第一次执行/proc/kmsg 打印到目前位置的所有内核信息，再次执行/proc/kmsg，不打印打印过了的信息。
+
+
+
+## loadavg
+
+系统平均负载:在特定时间间隔内运行队列中的平均进程数。
+
+```
+53.03 52.68 52.59 4/1521 10165
+前三个是1、5、15分钟内的平均进程数。第四个的分子是正在运行的进程数，分母是进程总数；最后一个最近运行的进程ID号。
+```
+
+
+
+## meminfo
+
+系统内存的使用情况。
+
+
+
+## modules
+
+系统模块（lsmod)
+
+```
+第一列： 模块的名字
+第二列： 模块的内存大小，单位是bytes
+第三列： 被load的次数，0以为着没有被load过
+第四列： 是否依赖第三方moudle，列出这些module
+第五列： 模块的状态，有Live， Loading， Unloading三种状态
+第六列： 模块当前的内核内存偏移位置。这些信息，debug的时候会非常有用。例如一些诊断工具 oprofile。
+```
+
+
+
+## mounts
+
+已挂载的设备。
+
+
+
+## net
+
+网络相关，单独说明。
+
+
+
+## partions
+
+系统分区情况。
+
+
+
+## pressure
+
+系统压力信息。
+avg10、avg60、avg300 分别代表 10s、60s、300s 的时间周期内的阻塞时间百分比。total 是总累计时间，以毫秒为单位。
+some 这一行，代表至少有一个任务在某个资源上阻塞的时间占比，full 这一行，代表所有的非idle任务同时被阻塞的时间占比，这期间 cpu 被完全浪费，会带来严重的性能问题。
+
+* cpu
+  ```
+  some avg10=19.70 avg60=19.72 avg300=20.31 total=1575848274
+  ```
+
+* io
+  ```
+  some avg10=0.00 avg60=0.00 avg300=0.00 total=8720394
+  full avg10=0.00 avg60=0.00 avg300=0.00 total=2892637
+  ```
+
+* memory
+  ```
+  some avg10=0.00 avg60=0.00 avg300=0.00 total=185993
+  full avg10=0.00 avg60=0.00 avg300=0.00 total=24324
+  ```
+
+
+
+## sched_debug
+
+每个cpu上的进程调度信息。
+
+
+
+## self
+
+我们都知道可以通过/proc/$pid/来获取指定进程的信息，例如内存映射、CPU绑定信息等等。如果某个进程想要获取本进程的系统信息，就可以通过进程的pid来访问/proc/$pid/目录。但是这个方法还需要获取进程pid，在fork、daemon等情况下pid还可能发生变化。为了更方便的获取本进程的信息，linux提供了/proc/self/目录，这个目录比较独特，不同的进程访问该目录时获得的信息是不同的，内容等价于/proc/本进程pid/。进程可以通过访问/proc/self/目录来获取自己的系统信息，而不用每次都获取pid。
+
+
+
+## 
 
 
 
