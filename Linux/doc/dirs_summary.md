@@ -277,6 +277,165 @@ carrier: The number of carrier losses detected by the device driver.（由设备
 multicast: The number of multicast frames transmitted or received by the device driver.（设备驱动程序发送或接收的多播帧数）
 ```
 
+### fib_trie
+
+用于显示路由表的树状图。
+
+```
+Main: 路由出去的IP地址。
+  +-- 0.0.0.0/0 3 0 5
+     |-- 0.0.0.0
+        /0 universe UNICAST
+        /0 universe UNICAST
+     +-- 127.0.0.0/8 2 0 2
+        +-- 127.0.0.0/31 1 0 0
+           |-- 127.0.0.0
+              /32 link BROADCAST
+              /8 host LOCAL
+           |-- 127.0.0.1
+              /32 host LOCAL
+        |-- 127.255.255.255
+           /32 link BROADCAST
+     +-- 192.168.190.0/24 2 0 1
+        |-- 192.168.190.0
+           /32 link BROADCAST
+           /24 link UNICAST
+           /24 link UNICAST
+        +-- 192.168.190.130/31 1 0 0
+           |-- 192.168.190.130
+              /32 host LOCAL
+           |-- 192.168.190.131
+              /32 host LOCAL
+        |-- 192.168.190.255
+           /32 link BROADCAST
+Local: 表示自己的IP地址
+  +-- 0.0.0.0/0 3 0 5
+     |-- 0.0.0.0
+        /0 universe UNICAST
+        /0 universe UNICAST
+     +-- 127.0.0.0/8 2 0 2
+        +-- 127.0.0.0/31 1 0 0
+           |-- 127.0.0.0
+              /32 link BROADCAST
+              /8 host LOCAL
+           |-- 127.0.0.1
+              /32 host LOCAL
+        |-- 127.255.255.255
+           /32 link BROADCAST
+     +-- 192.168.190.0/24 2 0 1
+        |-- 192.168.190.0
+           /32 link BROADCAST
+           /24 link UNICAST
+           /24 link UNICAST
+        +-- 192.168.190.130/31 1 0 0
+           |-- 192.168.190.130
+              /32 host LOCAL
+           |-- 192.168.190.131
+              /32 host LOCAL
+        |-- 192.168.190.255
+           /32 link BROADCAST
+```
+
+### fib_triestat
+
+统计了树的一些统计信息。
+
+### if_inet6
+
+```
+00000000000000000000000000000001 01 80 10 80       lo
+fe80000000000000c5110e49217049d1 02 40 20 80    ens33
+各字段含义：
+1. ipv6地址
+2. 接口ID，这个是每一个接口都不一样的，文件中显示的是十六进制数字
+3. 前缀长度，类似于IPv4的掩码
+4. 暂不知
+5. 标志位，这个字段表示这个地址的状态，有以下几种值：
+	#define IFA_F_SECONDARY		0x01
+    #define IFA_F_TEMPORARY		IFA_F_SECONDARY
+
+    #define IFA_F_NODAD	        		0x02
+    #define IFA_F_OPTIMISTIC	        0x04
+    #define IFA_F_DADFAILED				0x08
+    #define IFA_F_HOMEADDRESS	        0x10
+    #define IFA_F_DEPRECATED	        0x20
+    #define IFA_F_TENTATIVE				0x40
+    #define IFA_F_PERMANENT				0x80
+    #define IFA_F_MANAGETEMPADDR		0x100
+    #define IFA_F_NOPREFIXROUTE			0x200
+    #define IFA_F_MCAUTOJOIN	        0x400
+    #define IFA_F_STABLE_PRIVACY		0x800
+
+```
+
+### igmp
+
+igmp分组情况。
+
+### ipv6_route
+
+ipv6路由信息。
+
+### raw
+
+原始套接口的套接口表。
+
+### route
+
+静态路由表。
+
+### snmp
+
+可以得到各层网络协议的收发包的情况。
+
+```
+Ip: Forwarding DefaultTTL InReceives InHdrErrors InAddrErrors ForwDatagrams InUnknownProtos InDiscards InDelivers OutRequests OutDiscards OutNoRoutes ReasmTimeout ReasmReqds ReasmOKs ReasmFails FragOKs FragFails FragCreates
+Ip: 2 64 28008 0 3739 0 0 0 24268 13592 0 1 0 0 0 0 0 0 0
+Icmp: InMsgs InErrors InCsumErrors InDestUnreachs InTimeExcds InParmProbs InSrcQuenchs InRedirects InEchos InEchoReps InTimestamps InTimestampReps InAddrMasks InAddrMaskReps OutMsgs OutErrors OutDestUnreachs OutTimeExcds OutParmProbs OutSrcQuenchs OutRedirects OutEchos OutEchoReps OutTimestamps OutTimestampReps OutAddrMasks OutAddrMaskReps
+Icmp: 97 5 0 89 0 0 0 0 5 3 0 0 0 0 42 0 31 0 0 0 0 6 5 0 0 0 0
+IcmpMsg: InType0 InType3 InType8 OutType0 OutType3 OutType8
+IcmpMsg: 3 89 5 5 31 6
+Tcp: RtoAlgorithm RtoMin RtoMax MaxConn ActiveOpens PassiveOpens AttemptFails EstabResets CurrEstab InSegs OutSegs RetransSegs InErrs OutRsts InCsumErrors
+Tcp: 1 200 120000 -1 1807 14 2 2 0 8424 8526 89 11 20 0
+Udp: InDatagrams NoPorts InErrors OutDatagrams RcvbufErrors SndbufErrors InCsumErrors IgnoredMulti MemErrors
+Udp: 4840 16 0 4373 0 0 0 10890 0
+UdpLite: InDatagrams NoPorts InErrors OutDatagrams RcvbufErrors SndbufErrors InCsumErrors IgnoredMulti MemErrors
+UdpLite: 0 0 0 0 0 0 0 0 0
+```
+
+### sockstat
+
+```
+sockets: used 224
+TCP: inuse 0 orphan 0 tw 0 alloc 0 mem 0
+UDP: inuse 2 mem 2
+UDPLITE: inuse 0
+RAW: inuse 1
+FRAG: inuse 0 memory 0
+-----------------------------------------------
+sockets: used：已使用的所有协议套接字总量
+TCP: inuse：正在使用（正在侦听）的TCP套接字数量。其值≤ netstat –lnt | grep ^tcp | wc –l
+TCP: orphan：无主（不属于任何进程）的TCP连接数（无用、待销毁的TCP socket数）
+TCP: tw：等待关闭的TCP连接数。其值等于netstat –ant | grep TIME_WAIT | wc –l
+TCP：alloc(allocated)：已分配（已建立、已申请到sk_buff）的TCP套接字数量。其值等于netstat –ant | grep ^tcp | wc –l
+TCP：mem：套接字缓冲区使用量（单位不详。用scp实测，速度在4803.9kB/s时：其值=11，netstat –ant 中相应的22端口的Recv-Q＝0，Send-Q≈400）
+UDP：inuse：正在使用的UDP套接字数量
+RAW：
+FRAG：使用的IP段数量
+```
+
+### tcp
+
+![net_tcp](res/net_tcp.png)
+
+### udp
+
+```
+  sl  local_address rem_address   st tx_queue rx_queue tr tm->when retrnsmt   uid  timeout inode ref pointer drops
+ 1582: 83BEA8C0:0044 FEBEA8C0:0043 01 00000000:00000000 00:00000000 00000000     0        0 1402370 2 000000005b180e90 0
+ 1582: 00000000:0044 00000000:0000 07 00000000:00000000 00:00000000 00000000     0        0 20069 2 000000007a7e5078 0
+```
+
 
 
 ## partions
