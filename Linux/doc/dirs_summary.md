@@ -578,7 +578,136 @@ Filename				Type		Size		Used		Priority
 
 ## sys
 
-系统相关，单独说明。
+### fs
+
+#### aio-max-nr
+
+aio-nr的最大值。
+
+#### aio-nr
+
+当前系统异步io请求的数量（asynchronous io request）。
+
+#### dentry-state
+
+目录缓存状态。有6个值，但是只有前三个值是有意义的。
+
+```
+39448   15043   45      0       0       0
+当前的dentry数量		 未使用的dentry数量		当内存不足时,系统延迟回收的时间。
+```
+
+#### dir-notify-enable
+
+目录监听机制（配合inotify）。0表示disable；1表示enable。
+
+#### epoll
+
+* max_user_watches
+
+  epoll监听的最大数量。
+
+#### file-max
+
+系统中所有进程一共可以打开的文件（句柄）数量。
+
+#### file-nr
+
+系统文件句柄的使用情况。
+
+```
+8160    0       184287
+已分配文件句柄的数目     已分配未使用文件句柄的数目      文件句柄的最大数目
+```
+
+#### inode-nr
+
+inode-state的前两项。
+
+```
+37636   0
+已分配inode数		空闲inode数
+```
+
+#### inode-state
+
+#### inotify
+
+* max_queued_events
+
+  表示调用inotify_init时分配给inotify instance中可排队的event的数目的最大值，超出这个值的事件被丢弃，但会触发IN_Q_OVERFLOW事件。
+
+* max_user_instance
+
+  表示每一个real user ID可创建的inotify instatnces的数量上限，默认128。
+
+* max_user_watches
+
+  表示同一用户同时可以添加的watch数目（watch一般是针对目录，决定了同时同一用户可以监控的目录数量）。
+
+#### lease-break-time
+
+文件租赁中断时间。This file specifies the grace period (in seconds) that the kernel grants to a process holding a file lease after it has sent a signal to that process notifying it that another process is waiting to open the file. If the lease holder does not remove or downgrade the lease within this grace period, the kernel forcibly breaks the lease.
+
+#### leases-enable
+
+#### mount-max
+
+#### mqueue
+
+This subdirectory contains files that are used for controlling the resources used by POSIX message queues.
+
+#### nr_open
+
+单进程最大file-handles。
+
+#### overflowgid
+
+Linux的GID为32位，但有些文件系统只支持16位的GID，此时若进行写操作会出错；当GID超过65535时会自动被转换为一个固定值，这个固定值保存在这个文件中。
+
+#### overflowuid
+
+#### pipe-max-size
+
+#### pipe-user-pages-hard
+
+#### pipe-user-pages-soft
+
+#### protcted_fifos
+
+这个参数基于 Openwall 软件的限制，可以避免向攻击者控制的 FIFO 进行无意的写操作。
+
+```
+0 - 写入 FIFO 是不受限制的。
+1 - 不允许在世界可写粘性目录下不拥有的 FIFOs 上打开 O_CREAT 标志,除非目录所有者拥有它们。
+2 - 适用于组可写入粘滞目录。
+```
+
+#### protected-hardlinks
+
+```
+0 - 硬链接创建行为不受限制。
+1 - 如果用户尚未拥有源文件或没有对源文件的读取/写入权限，则无法创建硬链接。
+```
+
+#### protected-regular
+
+这个参数与 `protected_fifos` 类似,但它避免了向攻击者控制的常规文件写入,因为某个程序要创建它。
+
+#### protected_symlinks
+
+与`protected-hardlinks`类似。
+
+#### suid_dumpable
+
+若程序调用了seteuid()/setegid()改变了进程的有效用户或组，则在默认情况下系统不会为这些进程生成Coredump。为了能够让这些进程生成core
+dump，需要将`/proc/sys/fs/suiddumpable`文件的内容改为1（一般默认是0）。
+
+### kernel
+
+### net
+
+
 
 
 
@@ -669,6 +798,14 @@ Linux version 5.11.4-arch1-1 (linux@archlinux) (gcc (GCC) 10.2.0, GNU ld (GNU Bi
 
 
 
+
+# 附
+
+## coredump
+
+在linux下开发时，如果程序突然崩溃了，也没有任何日志。这时可以查看core文件。从core文件中分析原因，通过gdb看出程序挂在哪里，分析前后的变量，找出问题的原因。
+
+当程序运行的过程中异常终止或崩溃，操作系统会将程序当时的内存状态记录下来，保存在一个文件中，这种行为就叫做Core Dump（中文有的翻译成“核心转储”)。我们可以认为 core dump 是“内存快照”，但实际上，除了内存信息之外，还有些关键的程序运行状态也会同时 dump 下来，例如寄存器信息（包括程序指针、栈指针等）、内存管理信息、其他处理器和操作系统状态和信息。core dump 对于编程人员诊断和调试程序是非常有帮助的，因为对于有些程序错误是很难重现的，例如指针异常，而 core dump 文件可以再现程序出错时的情景。
 
 
 
