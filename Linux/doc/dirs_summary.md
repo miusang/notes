@@ -889,13 +889,319 @@ ftrace是否打开。
 1：发生panic
 ```
 
-
-
 #### perf_cpu_time_max_percent
 
 perf分析工具最大能够占用CPU性能的百分比。
 
 #### perf_event_max_contexts_per_stack
+
+#### perf_event_max_sample_rate
+
+设置perf_event的最大取样速率，默认值为100000。
+
+#### perf_event_max_stack
+
+#### perf_event_mlock_kb
+
+设置非特权用户能够允许常驻内存的内存大小。默认为516(KB)。
+
+#### perf_event_paranoid
+
+用于限制访问性能计数器的权限。
+
+```
+0：仅允许访问用户空间的性能计数器
+1：内核与用户空间的性能计数器都可以访问
+2：仅允许访问特殊的CPU数据(不包括跟踪点)
+-1：不限制
+```
+
+
+
+#### pid_max
+
+进程pid号的最大值。
+
+
+
+#### poweroff_cmd
+
+执行关机命令的进程(包括路径)。
+
+
+
+#### print-fatal-signals
+
+#### printk
+
+该文件有四个数字值，它们根据日志记录消息的重要性，定义将其发送到何处。
+
+```
+1.控制台日志级别：优先级高于该值的消息将被打印至控制台
+2.默认的消息日志级别：将用该优先级来打印没有优先级的消息
+3.最低的控制台日志级别：控制台日志级别可被设置的最小值(最高优先级)
+4.默认的控制台日志级别：控制台日志级别的缺省值
+数值越小，优先级越高，级别有(0~7)
+```
+
+#### printk_delay
+
+printk 消息之间的延迟毫秒数，此值不可设置。
+
+#### printk_ratelimit
+
+等待允许再次printk的时间(以秒为单位)，与printk_ratelimit()函数有关。
+
+#### printk_ratelimit_burst
+
+printk的缓存队列长度(每个printk为一个长度，比如此值为5，而有段代码是连续printk10次，系统的处理是先printk前5次，等待printk_ratelimit秒后，再打印后面5次)。
+
+
+
+#### pty
+
+* max
+
+  所能分配的PTY的最多个数(pty为虚拟终端，用于远程连接时)
+
+* nr
+
+  当前分配的pty的个数
+
+* reserve
+
+
+
+#### random
+
+* boot_id
+
+  此文件是个只读文件，包含了一个随机字符串，在系统启动的时候会自动生成这个uuid。
+
+* entropy_avail
+
+  此文件是个只读文件，给出了一个有效的熵(4096位)。
+
+* poolsize
+
+  熵池大小，一般是4096位，可以改成任何大小。
+
+* read_wakeup_threshold
+
+  该文件保存熵的长度，该长度用于唤醒因读取/dev/random设备而待机的进程。
+
+* uuid
+
+  此文件是个只读文件，包含了一个随机字符串，在random设备每次被读的时候生成。
+
+* write_wakeup_threshold
+
+  该文件保存熵的长度，该长度用于唤醒因写入/dev/random设备而待机的进程。
+
+
+
+#### randomize_va_space
+
+用于设置进程虚拟地址空间的随机化。
+
+```
+：关闭进程虚拟地址空间随机化
+1：随机化进程虚拟地址空间中的mmap映射区的初始地址，栈空间的初始地址以及VDSO页的地址
+2：在1的基础上加上堆区的随机化
+(VDSO是用于兼容不同内核与glibc的接口的机制)
+```
+
+
+
+#### real-root-dev
+
+根文件系统所在的设备(写入格式是0x主设备号(16位)次设备号(16位)，例如0x801，主设备号是8，次设备号是1)，只有使用initrd.img此参数才有效。
+
+
+
+#### sched_autogroup_enabled
+
+启用后，内核会创建任务组来优化桌面程序的调度。它将把占用大量资源的应用程序放在它们自己的任务组，这有助于性能提升。0：禁止 1：开启。
+
+#### sched_cfs_bandwidth_slice_us
+
+#### sched_child_runs_first
+
+设置保证子进程初始化完成后在父进程之前先被调度。
+
+```
+0：先调度父进程
+1：先调度子进程
+```
+
+#### sched_domain
+
+#### sched_energy_aware
+
+#### sched_latency_ns
+
+表示正在运行进程的所能运行的时间的最大值，即使只有一个处于running状态的进程，运行到这个时间也要重新调度一次。
+
+#### sched_migration_cost_ns
+
+该变量用来判断一个进程是否还是hot，如果进程的运行时间（now - p->se.exec_start）小于它，那么内核认为它的code还在cache里，所以该进程还是hot，那么在迁移的时候就不会考虑它。
+
+#### sched_min_granularity_ns
+
+表示一个进程在CPU上运行的最小时间，在此时间内，内核是不会主动挑选其他进程进行调度。
+
+#### sched_nr_migrate
+
+在多CPU情况下进行负载均衡时，一次最多移动多少个进程到另一个CPU上。
+
+#### ched_rr_timeslice_ms
+
+用来指示round robin调度进程的间隔，这个间隔默认是100ms。
+
+#### sched_rt_period_us
+
+该参数与sched_rt_runtime_us一起决定了实时进程在以sched_rt_period为周期的时间内，实时进程最多能够运行的总的时间不能超过sched_rt_runtime_us。
+
+#### sched_rt_runtime_us
+
+该参数与sched_rt_period一起决定了实时进程在以sched_rt_period为周期的时间内，实时进程最多能够运行的总的时间不能超过sched_rt_runtime_us。
+
+#### sched_schedstats
+
+#### sched_tunable_scaling
+
+当内核试图调整sched_min_granularity，sched_latency和sched_wakeup_granularity这三个值的时候所使用的更新方法：
+
+```
+0：不调整
+1：按照cpu个数以2为底的对数值进行调整
+2：按照cpu的个数进行线性比例的调整
+```
+
+#### sched_util_clamp_max
+
+#### sched_util_clamp_min
+
+#### sched_util_clamp_min_rt_default
+
+#### sched_wakeup_granularity_ns
+
+该变量表示进程被唤醒后至少应该运行的时间的基数，它只是用来判断某个进程是否应该抢占当前进程，并不代表它能够执行的最小时间（sysctl_sched_min_granularity），如果这个数值越小，那么发生抢占的概率也就越高。
+
+
+
+#### seccomp
+
+* actions_avail
+
+  ```
+  kill_process kill_thread trap errno user_notif trace log allow
+  ```
+
+* actions_logged
+
+  ```
+  kill_process kill_thread trap errno user_notif trace log
+  ```
+
+
+
+#### sem
+
+该文件包含4个值：
+
+```
+1.同一类信号的最多数量(semmsl)
+2.系统中信号的最多数目，=semmni*semmsl (semmns)
+3.每个semop系统调用所包含的最大的操作数(能调用的信号量的最多次数) (semopm)
+4.系统中信号类型的数目的最大值，一个信号量标识符代表一个类型(semmni)
+```
+
+#### sem_next_id
+
+
+
+#### shmall
+
+系统上可以使用的共享内存的总量（以字节为单位）。
+
+#### shmmax
+
+系统所允许的最大共享内存段的大小（以字节为单位）。
+
+#### shmmni
+
+整个系统共享内存段的最大数量。 
+
+#### shm_next_id
+
+#### shm_rmid_forced
+
+强制SHM空间和一个进程联系在一起，所以可以通过杀死进程来释放内存。0：不设置 1：设置。
+
+
+
+#### softlockup_all_cpu_backtrace
+
+#### softlockup_panic
+
+设置产生softlockup时是否抛出一个panic。Softlockup用于检测CPU可以响应中断，但是在长时间内不能调度（比如禁止抢占时间太长）的死锁情况。这个机制运行在一个hrtimer的中断上下文，每隔一段时间检测一下是否发生了调度，如果过长时间没发生调度，说明系统被死锁。0：不产生panic 1：产生panic。
+
+#### soft_watchdog
+
+#### stack_tracer_enabled
+
+#### sysctl_writes_strict
+
+#### sysrq
+
+该文件指定的值为非零，则激活键盘上的sysrq按键。这个按键用于给内核传递信息，用于紧急情况下重启系统。当遇到死机或者没有响应的时候，甚至连 tty 都进不去，可以尝试用 SysRq 重启计算机。
+
+
+
+#### tainted
+
+1：加载非GPL module0：强制加载module 。
+
+
+
+#### threads-max
+
+最大线程数。
+
+
+
+#### timer_migration
+
+#### traceoff_on_warning
+
+#### tracepoint_printk
+
+#### unknown_nmi_panic
+
+#### unprivileged_bpf_disabled
+
+#### unprivileged_userns_clone
+
+#### usermodehelper
+
+
+
+#### version
+
+```
+#1 SMP PREEMPT Sun, 07 Mar 2021 18:00:49 +0000
+```
+
+
+
+#### watchdog
+
+表示是否禁止softlockup模式和nmi_watchdog(softlockup用于唤醒watchdog)。0：禁止；1：开启。
+
+
+
+
 
 
 
