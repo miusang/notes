@@ -1,0 +1,19 @@
+1. install smb
+   sudo apt install samba
+   sudo apt install smbclient
+2. /etc/samba/smb.conf 
+   [share]
+   comment = share folder
+   browseable = yes
+   path = /home/atom/share
+   create mask = 0777
+   directory mask = 0777
+   valid users = atom
+   force user = atom
+   force group = atom
+   public = yes
+   available = yes
+   read only = no
+   writable = yes
+3. sudo smbpasswd -a atom
+4. sudo service smbd restart
