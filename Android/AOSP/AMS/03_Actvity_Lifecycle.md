@@ -1,8 +1,14 @@
-# Activity
+## Activity
 
 Activity可以理解为和用户交互的界面。
 
+
+
+
+
 ## Activity的生命周期
+
+------
 
 ![activity_flow](res/activity_life.png)
 * onCreate
@@ -20,11 +26,27 @@ Activity被销毁前调用。
 * onRestart
 Activity已停止并即将再次启动前调用。
 
+
+
+## Activity切换流程
+
+------
+
+Activity1切换到Actvity2的流程如下：
+
+Activity1 onPause	-->	Activity2 onCreate	-->	Activity2 onStart	-->	Activity2 onResume	-->	Activity1 onStop	--> Activity1 onDestroy
+
+
+
+
+
 ## Actvity的启动流程
 
-![activity_start_flow](res/activity_start_flow.png)
+------
 
-### #1 
+### onCreate
+
+![activity_start_flow](res/activity_start_flow.png)
 
 接下来分析一下Activity的启动流程，例如在launcher桌面上点击一个app的图表，launcher进程会响应onClick事件，从而调用startActivity接口启动对应的Activity:
 
@@ -56,8 +78,6 @@ public void startActivityForResult(Intent intent, int requestCode, Bundle option
     // ...
 }
 ```
-### #2 
-
 接下来分析execStartActivity()方法：
 
 ```java
@@ -100,18 +120,28 @@ public abstract calss Singleton<T> {
 }
 ```
 通过AIDL生成的代理类IActivityManager，调用AMS的startActivity，该方法共10个参数：
+
 * caller：当前应用的Application对象mAppThread
+
 * callingPackage：当前Activity所在的包名
+
 * intent：启动Activity传入的参数
+
 * relovedType：调用intent.resolveTypeIfNeeded获取
+
 * resultTo：当前Activity.mToken
+
 * resultWho：当前Activity.mEmbeddedID
+
 * requestCode：-1
+
 * flags：0
+
 * profilerInfo：null
+
 * options：null
 
-### #3
+  
 
 接下来分析AMS的startActivity方法：
 
@@ -149,8 +179,6 @@ int startActivityAsUser(IApplicationThread caller, ..., int userId, boolean vali
         .execute();
 }
 ```
-### #4
-
 可以看到，通过建造者模式，来设置参数，通过execute方法最后执行。我们继续分析obtainStarter方法和execute方法：
 
 ```java
@@ -191,8 +219,6 @@ int startActivityInner(final ActivityRecord r, ActivityRecord sourceRecord,
     // ...
 }
 ```
-### #5
-
 接着看resumeFocusedStacksTopActivities方法的实现
 
 ```java
@@ -206,8 +232,6 @@ boolean resumeFocusedStacksTopActivities(
     }
 }
 ```
-
-### #6
 
 继续
 
@@ -225,8 +249,6 @@ private boolean resumeTopActivityInnerLocked(ActivityRecord prev, ActivityOption
     // ...
 }
 ```
-
-### #7
 
 继续
 
@@ -269,8 +291,6 @@ boolean realStartActivityLocked(ActivityRecord r, WindowProcessController proc,
 
 可以看到，如上创建了ClientTransaction对象，然后通过clientTransaction.addCallback添加了一个LauncherActivityItem对象，（LauncherActivityItem.obtain方法返回的是一个LauncherActivityItem对象），此处为realStartActivityLocked方法的核心部分。
 
-### #8
-
 然后调用ClientLifecycleManager的scheduleTransaction方法将当前的事务进行提交，接着看一下该方法的实现：
 
 ```java
@@ -297,8 +317,6 @@ public void scheduleTransaction(ClientTransaction transaction) throws RemoteExce
 }
 ```
 
-### #9
-
 可以看到最终call到了ActivityThread父类ClientTransactionHandler的scheduleTransaction方法，接下来继续看其具体实现：
 
 ```java
@@ -308,8 +326,6 @@ void scheduleTransaction(ClientTransaction transaction) {
     sendMessage(ActivityThread.H.EXECUTE_TRANSACTION, transaction);
 }
 ```
-
-### #10
 
 接着分析ActivityThread收到H.EXECUTE_TRANSACTION消息的处理：
 
@@ -332,8 +348,6 @@ public void handleMessage(Message msg) {
     // ...
 }
 ```
-
-### #11
 
 可以看到，mTransactionExecutor.execute()正式进入了事务的执行过程，看其实现：
 
@@ -359,9 +373,7 @@ public void executeCallbacks(ClientTransaction transaction) {
 }
 ```
 
-### #12
-
-可以看到，callbacks.get()方法获取的是ClientTransactionItem对象，根据realStartActivityLocked()方法中，clientTransaction.addCallback()可知，ClinetTransactionItem的具体实现类是LaunchActivityItem类，因此，接着看item.execute()方法的实现：
+可以看到，callbacks.get()方法获取的是ClientTransactionItem对象，根据realStartActivityLocked()方法中，clientTransaction.addCallback()可知，ClientTransactionItem的具体实现类是LaunchActivityItem类，因此，接着看item.execute()方法的实现：
 
 ```java
 // LaunchActivityItem.java
@@ -375,14 +387,7 @@ public void execute(ClientTransactionHandler client, IBinder token,
     client.handleLaunchActivity(r, pendingActions, null /* customIntent */);
     Trace.traceEnd(TRACE_TAG_ACTIVITY_MANAGER);
 }
-
-public void postExecute(ClientTransactionHandler client, IBinder token,
-         PendingTransactionActions pendingActions) {
-    client.countLaunchingActivities(-1);
-}
 ```
-
-### #13
 
 根据前面`ActivityThread.this.scheduleTransaction(transaction);`可知，client.handleLaunchActivity方法最终执行的是ActivityThread中的handleLuanchActivity方法，接下来看其实现：
 
@@ -407,8 +412,6 @@ private Activity performLaunchActivity(ActivityClientRecord r, Intent customInte
 }
 ```
 
-### #14
-
 接着进入Instrumentation类看其callActivityOnCreate方法：
 
 ```java
@@ -419,8 +422,6 @@ public void callActivityOnCreate(Activity activity, Bundle icicle) {
     postPerformCreate(activity);
 }
 ```
-
-### #15
 
 接着进入Activity类，看其performCreate方法的实现：
 
@@ -443,7 +444,9 @@ final void performCreate(Bundle icicle, PersistableBundle persistentState) {
 
 至此，回调到自定义Activity的onCreate()方法中。
 
+### onStart
 
+StartActivityItem.java handleStartActivity(
 
 
 
