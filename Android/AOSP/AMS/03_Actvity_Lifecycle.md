@@ -460,6 +460,10 @@ onStart阶段是在前一个activity执行完onPause后才被触发，我们以�
 
 ### onPause
 
+在activity1下start activity2，在activity2的创建过程中，会先执行pause actvity1，以start activity2的过程为起点分析activity1的onPause流程。
+
+
+
 
 
 ### onStop
