@@ -46,7 +46,7 @@ Activity1 onPause	-->	Activity2 onCreate	-->	Activity2 onStart	-->	Activity2 onR
 
 ### onCreate
 
-![activity_start_flow](res/activity_start_flow.png)
+![activity_create_flow](res/activity_create_flow.png)
 
 接下来分析一下Activity的启动流程，例如在launcher桌面上点击一个app的图表，launcher进程会响应onClick事件，从而调用startActivity接口启动对应的Activity:
 
@@ -444,13 +444,29 @@ final void performCreate(Bundle icicle, PersistableBundle persistentState) {
 
 至此，回调到自定义Activity的onCreate()方法中。
 
+
+
 ### onStart
 
-StartActivityItem.java handleStartActivity(
+onStart阶段是在前一个activity执行完onPause后才被触发，我们以前一个activityOnPaused阶段为起始点分析其调用流程（基于Android10）。
+
+![activity_start_flow](res/activity_start_flow.png)
 
 
 
+### onResume
 
+
+
+### onPause
+
+
+
+### onStop
+
+
+
+### onDestroy
 
 
 
