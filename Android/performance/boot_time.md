@@ -52,3 +52,4 @@ bootloader ---> kernel ---> init ---> zygote ---> system_server ---> launcher
 * IO优化
 linux有readahead功能，调整预读块大小，防止产生IO瓶颈。
 * 优化SELINUX
+

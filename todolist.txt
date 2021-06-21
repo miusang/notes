@@ -1,0 +1,7 @@
+1. android input system
+2. android boot flow
+3. android AMS
+4. android camera
+
+
+questions:
